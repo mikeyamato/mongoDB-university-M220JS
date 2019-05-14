@@ -1,3 +1,6 @@
+// chapter 1
+// to run test, `npm test -t callbacks-promises-async`
+
 describe("Callbacks, Promises, and Aysnc/Await", async () => {
   /**
    * In this lesson, we'll discuss the difference between callbacks, promises,

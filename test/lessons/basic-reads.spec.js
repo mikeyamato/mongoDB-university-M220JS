@@ -1,3 +1,6 @@
+// chapter 1
+// to run test, `npm test -t basic-reads`
+
 describe("Basic Reads", async () => {
   /**
    * In this lesson, we'll discuss how to perform query operations in MongoDB,
