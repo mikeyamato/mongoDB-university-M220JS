@@ -187,7 +187,7 @@ export default class MoviesDAO {
 
     /**
     Ticket: Faceted Search
-
+    `npm test -t facets`
     Please append the skipStage, limitStage, and facetStage to the queryPipeline
     (in that order). You can accomplish this by adding the stages directly to
     the queryPipeline.
@@ -199,6 +199,9 @@ export default class MoviesDAO {
     const queryPipeline = [
       matchStage,
       sortStage,
+      skipStage,
+      limitStage,
+      facetStage,
       // TODO Ticket: Faceted Search
       // Add the stages to queryPipeline in the correct order.
     ]
@@ -263,9 +266,11 @@ export default class MoviesDAO {
     */
 
     // TODO Ticket: Paging
+    // `npm test -t paging`
     // Use the cursor to only return the movies that belong on the current page
-    const displayCursor = cursor.limit(moviesPerPage)
-
+    const displayCursor = cursor
+      .skip(page > 0 ? page * moviesPerPage : 0)
+      .limit(moviesPerPage) // example is partially incorrect https://docs.mongodb.com/manual/reference/method/cursor.skip/#pagination-example
     try {
       const moviesList = await displayCursor.toArray()
       const totalNumMovies = page === 0 ? await movies.countDocuments(query) : 0
@@ -288,7 +293,7 @@ export default class MoviesDAO {
     try {
       /**
       Ticket: Get Comments
-
+      `npm test -t get-comments`
       Given a movie ID, build an Aggregation Pipeline to retrieve the comments
       matching that movie's ID.
 
@@ -299,9 +304,16 @@ export default class MoviesDAO {
       // TODO Ticket: Get Comments
       // Implement the required pipeline.
       const pipeline = [
+        { $match: { _id: ObjectId(id) } },
         {
-          $match: {
-            _id: ObjectId(id),
+          $lookup: {
+            from: "comments",
+            let: { id: "$_id" },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$movie_id", "$$id"] } } },
+              { $sort: { date: -1 } },
+            ],
+            as: "comments",
           },
         },
       ]

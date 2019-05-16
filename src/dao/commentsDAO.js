@@ -16,7 +16,7 @@ export default class CommentsDAO {
 
   /**
   Ticket: Create/Update Comments
-
+  `npm test -t create-update-comments`
   For this ticket, you will need to implement the following two methods:
 
   - addComment
@@ -45,7 +45,13 @@ export default class CommentsDAO {
     try {
       // TODO Ticket: Create/Update Comments
       // Construct the comment document to be inserted into MongoDB.
-      const commentDoc = { someField: "someValue" }
+      const commentDoc = {
+        name: user.name,
+        email: user.email,
+        movie_id: ObjectId(movieId),
+        text: comment,
+        date: date,
+      }
 
       return await comments.insertOne(commentDoc)
     } catch (e) {
@@ -70,8 +76,13 @@ export default class CommentsDAO {
       // Use the commentId and userEmail to select the proper comment, then
       // update the "text" and "date" fields of the selected comment.
       const updateResponse = await comments.updateOne(
-        { someField: "someValue" },
-        { $set: { someOtherField: "someOtherValue" } },
+        { _id: ObjectId(commentId), email: userEmail },
+        {
+          $set: {
+            text: text,
+            date: date,
+          },
+        },
       )
 
       return updateResponse
@@ -84,7 +95,7 @@ export default class CommentsDAO {
   static async deleteComment(commentId, userEmail) {
     /**
     Ticket: Delete Comments
-
+    `npm test -t delete-comments`
     Implement the deleteOne() call in this method.
 
     Ensure the delete operation is limited so only the user can delete their own
@@ -96,6 +107,7 @@ export default class CommentsDAO {
       // Use the userEmail and commentId to delete the proper comment.
       const deleteResponse = await comments.deleteOne({
         _id: ObjectId(commentId),
+        email: userEmail,
       })
 
       return deleteResponse
