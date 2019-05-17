@@ -1,4 +1,5 @@
 import { ObjectId } from "bson"
+import { stringify } from "querystring"
 
 let movies
 let mflix
@@ -321,7 +322,7 @@ export default class MoviesDAO {
     } catch (e) {
       /**
       Ticket: Error Handling
-
+      `npm test -t error-handling`
       Handle the error that occurs when an invalid ID is passed to this method.
       When this specific error is thrown, the method should return `null`.
       */
@@ -329,6 +330,10 @@ export default class MoviesDAO {
       // TODO Ticket: Error Handling
       // Catch the InvalidId error by string matching, and then handle it.
       console.error(`Something went wrong in getMovieByID: ${e}`)
+      if (String(e).startsWith("Error: Argument")) {
+        return null
+      }
+
       throw e
     }
   }

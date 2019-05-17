@@ -8,7 +8,7 @@ const port = process.env.PORT || 8000
 
 /**
 Ticket: Connection Pooling
-
+`npm test -t connection-pooling`
 Please change the configuration of the MongoClient object by setting the
 maximum connection pool size to 50 active connections.
 */
@@ -24,9 +24,13 @@ MongoClient.connect(
   process.env.MFLIX_DB_URI,
   // TODO: Connection Pooling
   // Set the poolSize to 50 connections.
-  // TODO: Timeouts
-  // Set the write timeout limit to 2500 milliseconds.
-  { useNewUrlParser: true },
+  {
+    poolSize: 50,
+    // TODO: Timeouts
+    // Set the write timeout limit to 2500 milliseconds.
+    wtimeout: 2500,
+    useNewUrlParser: true,
+  },
 )
   .catch(err => {
     console.error(err.stack)
